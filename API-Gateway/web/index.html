@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>JSP applelant une servlet</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Page de login</h1><br>
+        <form method="post" action="GatewayServlet"> 
+            <label for="user">Votre nom d'utilisateur :</label>
+            <input type="text" name="username" id="user" size="30" maxlength="30" />
+            <label for="pass">Votre mot de passe :</label>
+            <input type="password" name="password" id="pass" size="30" maxlength="30" />
+            <input type="submit" value="Soumettre">
+        </form>
+    </body>
+</html>
