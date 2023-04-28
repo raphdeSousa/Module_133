@@ -19,6 +19,9 @@ body {
     background-color: #ae2929;
   
   }
+  .containerGestion{
+    visibility: hidden;
+  }
   
   .titre {
     grid-area: titre;
