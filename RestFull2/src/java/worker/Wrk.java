@@ -412,7 +412,7 @@ public class Wrk {
             try {
                 //On essaie de créer une requête grâce à notre connexion. 
                 // Create a SQL statement
-                ps = jdbcConnection.prepareStatement("DELETE FROM tr_manga_user WHERE FK_manga = ? AND FK_user =?");
+                ps = jdbcConnection.prepareStatement("DELETE FROM tr_manga_user WHERE FK_manga = ? AND FK_user = ?");
                 // Create a PreparedStatement object
                 ps.setInt(1, fkManga);
                 ps.setInt(2, fkUser);
