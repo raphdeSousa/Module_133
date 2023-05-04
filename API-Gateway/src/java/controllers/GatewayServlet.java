@@ -40,10 +40,56 @@ public class GatewayServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        String action = request.getParameter("action");
+        switch (action) {
+            case "getManga":
+                System.out.println("getManga");
+                break;
+            case "getFavoris":
+                System.out.println("getFavoris");
+                break;
+        }
     }
-    
-    
+
+    public String apiGetManga(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        return "";
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        response.setHeader("Access-Control-Allow-Origin", "*"); // pour le problème de CORS Policy
+        PrintWriter out = response.getWriter();
+        String result = "";
+        String action = request.getParameter("action");
+
+        switch (action) {
+            case "apiLogin":
+                result = apiLogin(request, response);
+                out.println(result);
+                break;
+
+            case "apiAjoutManga":
+                result = apiAjoutManga(request, response);
+                out.println(result);
+                break;
+
+            case "apiAjoutFavoris":
+                result = apiAjoutFavoris(request, response);
+                out.println(result);
+                break;
+        }
+    }
 
     public String sendCUD(String url, String method, HashMap<String, String> data) {
         String result = "false";
@@ -70,69 +116,78 @@ public class GatewayServlet extends HttpServlet {
         return result;
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Boolean connecte = false;
+    public String apiLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String valeurRetour = "";
 
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        URL url = new URL("http://localhost:8080/ServiceRest1/webresources/user/login");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-        conn.setDoOutput(true);
-        PrintWriter out = new PrintWriter(conn.getOutputStream());
-        String requestBody = "username=" + URLEncoder.encode(username, "UTF-8") + "&password=" + URLEncoder.encode(password, "UTF-8");
-        out.print(requestBody);
-        out.close();
-
-        RequestDispatcher dispatch;
-
-        if (response.getStatus() == 200) {
-            String json;
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
+        String code = sendCUD("http://gfellerm01.emf-informatique.ch/javaServiceRest1/webresources/user/login", "POST", new HashMap<String, String>() {
+            {
+                put("username", username);
+                put("password", password);
             }
-            br.close();
-            json = sb.toString();
+        });
+        SimpleResponse status = new Gson().fromJson(code, SimpleResponse.class);
+        System.out.println(status.getStatus());
 
-            SimpleResponse status = new Gson().fromJson(json, SimpleResponse.class);
-            String result = status.getStatus();
+        if ("success".equals(status.getStatus())) {
+            // Login succeeded, do something here
 
-            if ("success".equals(result)) {
-                // Login succeeded, do something here
-                connecte = true;
-                BeanInfo info = new BeanInfo();
-                info.setUsername(username);
-                info.setPassword(password);
+            valeurRetour = "Vous etes connecte";
 
-                dispatch = request.getRequestDispatcher("pageAutorise.jsp");
-                System.out.println("sucess");
+        } else if ("fail".equals(status)) {
+            // Login failed, do something here
 
-            } else if ("fail".equals(status)) {
-                // Login failed, do something here
-
-            } else {
-                // Error occurred, do something here
-
-            }
+            valeurRetour = "Login Failed, try another username or password";
         } else {
-            // gestion de l'erreur HTTP
-
+            // Error occurred, do something here
+            valeurRetour = "Login Error";
         }
+        return valeurRetour;
+    }
+
+    public String apiAjoutManga(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String valeurRetour = "";
+        
+        String nomDuManga = request.getParameter("nomDuManga");
+        String nomDuTome = request.getParameter("nomDuTome");
+        String numDuTome = request.getParameter("numDuTome");
+        String image = request.getParameter("image");
+        
+        String code = sendCUD("http://desousar.emf-informatique.ch/java.JspRestFull2/webresources/manga/ajoutManga", "POST", new HashMap<String, String>() {
+            {
+                put("nomDuManga", nomDuManga);
+                put("nomDuTome", nomDuTome);
+                put("numDuTome", numDuTome);
+                put("image", image);
+            }
+        });
+        SimpleResponse status = new Gson().fromJson(code, SimpleResponse.class);
+        
+        
+        
+        return valeurRetour;
+    }
+
+    public String apiAjoutFavoris(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String valeurRetour = "";
+        
+        String fkUser = request.getParameter("fkUser");
+        String fkManga = request.getParameter("fkManga");
+        
+        String code = sendCUD("http://desousar.emf-informatique.ch/java.JspRestFull2/webresources/manga/ajoutFavoris", "POST", new HashMap<String, String>() {
+            {
+                put("fkUser", fkUser);
+                put("fkManga", fkManga);
+            }
+        });
+        SimpleResponse status = new Gson().fromJson(code, SimpleResponse.class);
+        
+        return valeurRetour;
     }
 
     /**
