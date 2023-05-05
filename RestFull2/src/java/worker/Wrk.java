@@ -88,7 +88,7 @@ public class Wrk {
                         while (rs.next()) {
                             //On stocke le nom récupéré de la colonne "NomDuManga". 
                             String s = "";
-                            s = "Nom du Manga " + rs.getString(2) + " Nom du Tome " + rs.getString(3) + " Numéro du Tome " + rs.getString(4) + " img " + rs.getString(5);
+                            s = "Pk du Manga : "+rs.getString(1)+" Nom du Manga " + rs.getString(2) + " Nom du Tome " + rs.getString(3) + " Numéro du Tome " + rs.getString(4) + " img " + rs.getString(5)+" \n";
                             resultat.add(s);
                             //On stocke notre String dans notre résultat final.
                         }
