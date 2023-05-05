@@ -88,7 +88,7 @@ public class Wrk {
                         while (rs.next()) {
                             //On stocke le nom récupéré de la colonne "NomDuManga". 
                             String s = "";
-                            s = rs.getString(2) + " " + rs.getString(3) + " " + rs.getString(4) + " " + rs.getString(5);
+                            s = "Nom du Manga " + rs.getString(2) + " Nom du Tome " + rs.getString(3) + " Numéro du Tome " + rs.getString(4) + " img " + rs.getString(5);
                             resultat.add(s);
                             //On stocke notre String dans notre résultat final.
                         }
@@ -170,7 +170,7 @@ public class Wrk {
         return ok;
     }
 
-    public boolean modifyManga(int pk,String nomDuTome, String nomDuManga, String numeroDuTome, String image) {
+    public boolean modifyManga(int pk, String nomDuTome, String nomDuManga, String numeroDuTome, String image) {
         boolean ok = false;
         boolean opendb = dbConnect();
         ResultSet rs = null;
@@ -187,7 +187,7 @@ public class Wrk {
                 ps.setString(4, image);
                 ps.setInt(5, pk);
                 ps.executeUpdate();
-               ok =true; 
+                ok = true;
                 //On ferme le tout pour optimiser les performances.
             } catch (SQLException ex) {
                 Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
@@ -228,7 +228,7 @@ public class Wrk {
                 // Create a PreparedStatement object
                 ps.setInt(1, pk);
                 ps.executeUpdate();
-               ok =true; 
+                ok = true;
                 //On ferme le tout pour optimiser les performances.
             } catch (SQLException ex) {
                 Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
@@ -257,7 +257,7 @@ public class Wrk {
         return ok;
     }
 
-    public ArrayList<String> lireFavoris() {
+    public ArrayList<String> lireFavoris(int user) {
         //On prépare nos variables.
         ArrayList<String> resultat = new ArrayList<>();
         Statement stmt = null;
@@ -268,7 +268,9 @@ public class Wrk {
                 //On essaie de créer une requête grâce à notre connexion. 
                 if ((stmt = jdbcConnection.createStatement()) != null) {
                     //Ce string est la requête SQL qui va récupérer les enregistrements.
-                    String sql = "SELECT * FROM tr_manga_user";
+                    String sql = "SELECT tr_manga_user.FK_user, t_manga.NomDuManga, t_manga.NomDuTome, t_manga.NumeroDuTome, t_manga.Image FROM t_manga INNER JOIN tr_manga_user ON tr_manga_user.FK_manga = t_manga.PK_Manga WHERE tr_manga_user.FK_user = " + user;
+
+
                     //On exécute la requête et on stocke la réponse dans un "ResulSet"
                     //Si notre "ResulSet" contient quelque chose, c'est qu'on a reçu une réponse !
                     if ((rs = stmt.executeQuery(sql)) != null) {
@@ -278,11 +280,12 @@ public class Wrk {
                         //un enregistrement null.
                         while (rs.next()) {
                             //On stocke le nom récupéré de la colonne "NomDuManga". 
-                            String s = "";
-                            s = rs.getString(1) + " " + rs.getString(2);
-                            resultat.add(s);
-                            //On stocke notre String dans notre résultat final.
+                            String result = "";
+                            result = result + "User " + user + " Nom du manga: " + rs.getString(2) + " Nom du tome: " + rs.getString(3) + " Numéro du tome: " + rs.getString(4) + " Image:" + rs.getString(5);
+                            resultat.add(result);
                         }
+
+                        //On stocke notre String dans notre résultat final.
                     }
                     //On ferme le tout pour optimiser les performances.
                     rs.close();
@@ -315,7 +318,7 @@ public class Wrk {
         }
         return resultat;
     }
-    
+
     public boolean addFavoris(int fkUser, int fkManga) {
         boolean ok = false;
         Statement stmt = null;
@@ -333,8 +336,10 @@ public class Wrk {
                 int rowsInserted = ps.executeUpdate();
                 ok = rowsInserted > 0;
                 //On ferme le tout pour optimiser les performances.
+
             } catch (SQLException ex) {
-                Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Wrk.class
+                        .getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
             finally {
                 dbDisconnect();
@@ -342,24 +347,28 @@ public class Wrk {
                     if (rs != null) {
                         rs.close();
                         rs = null;
+
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
                     if (ps != null) {
                         ps.close();
                         ps = null;
+
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
         return ok;
     }
 
-    public boolean modifyFavoris(int newFkUser,int newFkManga,int oldFkUser,int oldFkManga) {
+    public boolean modifyFavoris(int newFkUser, int newFkManga, int oldFkUser, int oldFkManga) {
         boolean ok = false;
         boolean opendb = dbConnect();
         ResultSet rs = null;
@@ -375,10 +384,12 @@ public class Wrk {
                 ps.setInt(3, oldFkManga);
                 ps.setInt(4, oldFkUser);
                 ps.executeUpdate();
-               ok =true; 
+                ok = true;
                 //On ferme le tout pour optimiser les performances.
+
             } catch (SQLException ex) {
-                Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Wrk.class
+                        .getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
             finally {
                 dbDisconnect();
@@ -386,23 +397,28 @@ public class Wrk {
                     if (rs != null) {
                         rs.close();
                         rs = null;
+
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
                     if (ps != null) {
                         ps.close();
                         ps = null;
+
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
 
         return ok;
     }
+
     public boolean deleteFavoris(int fkUser, int fkManga) {
         boolean ok = false;
         boolean opendb = dbConnect();
@@ -417,10 +433,12 @@ public class Wrk {
                 ps.setInt(1, fkManga);
                 ps.setInt(2, fkUser);
                 ps.executeUpdate();
-               ok =true; 
+                ok = true;
                 //On ferme le tout pour optimiser les performances.
+
             } catch (SQLException ex) {
-                Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Wrk.class
+                        .getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
             finally {
                 dbDisconnect();
@@ -428,17 +446,21 @@ public class Wrk {
                     if (rs != null) {
                         rs.close();
                         rs = null;
+
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
                     if (ps != null) {
                         ps.close();
                         ps = null;
+
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class
+                            .getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

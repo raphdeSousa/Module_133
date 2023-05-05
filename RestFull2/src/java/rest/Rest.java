@@ -17,6 +17,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import worker.Wrk;
 
@@ -117,10 +118,10 @@ public class Rest {
     @GET
     @Path("getFavoris")
     @Produces(MediaType.TEXT_PLAIN)
-    public String getMangaUser() {
+    public String getMangaUser(@QueryParam("u") int user) {
         Gson builder = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
-        String mangaUser = builder.toJson(wrk.lireFavoris());
+        String mangaUser = builder.toJson(wrk.lireFavoris(user));
 //        On affiche notre résultat.
         return mangaUser;
     }
