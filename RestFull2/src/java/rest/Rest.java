@@ -107,7 +107,7 @@ public class Rest {
     @DELETE
     @Path("deleteManga")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteManga(@FormParam("Pk") int pk) {
+    public String deleteManga(@QueryParam("Pk") int pk) {
         Gson gson = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
         boolean ok = wrk.deleteManga(pk);

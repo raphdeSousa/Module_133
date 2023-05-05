@@ -37,10 +37,32 @@ body {
   grid-area: connexion;
 }
 
-.listeManga{
+.bntGestion{
   display: grid;
-  grid-template-columns: 20% 20% 20% 20% 20%;
+  grid-template-columns: 33% 33% 33%;
+  padding: 10px;
 }
+
+.column {
+  width: 20%;
+  float: left;
+  box-sizing: border-box;
+  padding: 10px;
+  height: 100%;
+}
+
+.lstManga::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Réglage de la largeur de chaque colonne */
+.col-1 {width: 20%;}
+.col-2 {width: 20%;}
+.col-3 {width: 20%;}
+.col-4 {width: 20%;}
+.col-5 {width: 20%;}
 
 .manga{
   display: flex;
