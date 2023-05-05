@@ -2,19 +2,19 @@
 <html lang="fr">
 
 <head>
-    <title>Gestion de manga</title>
+    <title>Grand Liste</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="stylesheets/main.css" />
     <script type="text/javascript" src="javascripts/helpers/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="javascripts/controllers/indexCtrl.js"></script>
-
+    <script type="text/javascript" src="javascripts/ctrl/indexCtrl.js"></script>
+    <script type="text/javascript" src="javascripts/services/servicesHttp.js"></script>
 
 </head>
 
 <body>
     <div class="container">
         <div class="titre">
-            <h1>Gestion de manga</h1>
+            <h1>Grand Liste</h1>
         </div>
         <div class="connexion">
             <div class="loginLabel">
@@ -28,7 +28,7 @@
                 <input type="password" name="txtPassword" id="txtPassword" />
             </div>
             <div class="connecter">
-                <button id="connecter">Connexion</button>
+                <button class = "button" id="connecter" type="submit" onclick="ctrl.login()">Connexion</button>
             </div>
             <div class="favori">
                 <button id="favori">Affichage des tomes obtenus</button>
@@ -36,17 +36,12 @@
         </div>
     </div>
     <div id="bntGestion" class="bntGestion">
-        <button id="addManga">ajouterManga</button>
+        <button id="addManga" onclick="ctrl.addManga()">ajouterManga</button>
         <button id="modifyManga">modifierManga</button>
         <button id="deleteManga">suprimerManga</button>
-    </div>
-
-    <div class="lstManga">
-        <div class="column col-1">Colonne 1</div>
-        <div class="column col-2">Colonne 2</div>
-        <div class="column col-3">Colonne 3</div>
-        <div class="column col-4">Colonne 4</div>
-        <div class="column col-5">Colonne 5</div>
+        <button id="addMangaFavoris" onclick="ctrl.addMangaFavoris()">ajouterMangaFavoris</button>
+        <button id="modifyMangaFavoris">modifierMangaFavoris</button>
+        <button id="deleteMangaFavoris">suprimerMangaFavoris</button>
     </div>
 
 

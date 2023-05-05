@@ -41,34 +41,9 @@ body {
   display: grid;
   grid-template-columns: 33% 33% 33%;
   padding: 10px;
+  margin: 10px;
 }
 
-.column {
-  width: 20%;
-  float: left;
-  box-sizing: border-box;
-  padding: 10px;
-  height: 100%;
-}
-
-.lstManga::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-/* Réglage de la largeur de chaque colonne */
-.col-1 {width: 20%;}
-.col-2 {width: 20%;}
-.col-3 {width: 20%;}
-.col-4 {width: 20%;}
-.col-5 {width: 20%;}
-
-.manga{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 table{
   background-color: #e7b7b7;
@@ -156,7 +131,7 @@ h1 {
   background-color: #e7b7b7;
   width: 90%;
   height: 50%;
-  text-align: left;
+  text-align: center;
   vertical-align: middle;
   padding-top: 0.5%;
   padding-right: 5%;
