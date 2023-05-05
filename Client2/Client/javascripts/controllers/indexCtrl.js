@@ -1,223 +1,239 @@
-/*
- * Contrôleur de la vue "index.html"
- *
- * @author de Sousa Raphael
- * @version 1.0 / 27.02.2023
- */
-let user = null;
-/**
- * Méthode appelée lors du retour avec succès de la liste des mangas
- * @param {type} data
- * @param {type} text
- * @param {type} jqXHR
- * @returns {undefined}
- */
-function chargerMangaSuccess(data, text, jqXHR)
-{    
-	var txt ='';
-    $(data).find("manga").each(function() {
-      var manga = new Manga();
-      manga.setNomDuManga($(this).find("nomManga").text());
-      manga.setPk($(this).find("pk_manga").text());
-      manga.setNomDuTome($(this).find("nomTome").text());
-      manga.setNumeroDuTome($(this).find("numTome").text());
-      manga.setImage($(this).find("image").text());
-      console.log(this);
-      txt = txt + "<div class=manga><table><tbody><tr><td>"+"<img id=myimage src=../serveur/images/" + manga.getImg() +"></img>" + "</td></tr><tr><td>" + manga.getNomDuTome() + " - " +manga.getNomDuManga() + ", <br> Tome " +manga.getNumeroDuTome() +  "<br></td></tr><tr><td><button class=butFavori id=manga" + manga.getPk()  + " >Ajouter à la collection</button>" + "</td></tr></tbody></table></div>";
-
-    });  
-    document.getElementById("listeManga").innerHTML = txt;
-    var favori = $('#favori');
-    document.getElementById('favori').innerHTML = "Favori";
-    favori.off('click');
-    favori.click(function (event) { getFavori(user, chargerFavori, chargerErrorManga) });
-}
-
-function chargerFavori(data, text, jqXHR)
-{    
-	var txt ='';
-    $(data).find("manga").each(function() {
-      var manga = new Manga();
-      manga.setNomDuManga($(this).find("nomManga").text());
-      manga.setPk($(this).find("pk_manga").text());
-      manga.setNomDuTome($(this).find("nomTome").text());
-      manga.setNumeroDuTome($(this).find("numTome").text());
-      manga.setImage($(this).find("image").text());
-      console.log(this);
-      txt = txt + "<div class=manga><table><tbody><tr><td>"+"<img id=myimage src=../serveur/images/" + manga.getImg() +"></img>" + "</td></tr><tr><td>" + manga.getNomDuTome() + " - " +manga.getNomDuManga() + ", <br> Tome " +manga.getNumeroDuTome() +  "<br></td></tr><tr><td><button class=butFavori id=manga" + manga.getPk()  + " >Ajouter à la collection</button>" + "</td></tr></tbody></table></div>";
-
-    });  
-    document.getElementById("listeManga").innerHTML = txt;
-    var favori = $('#favori');
-    document.getElementById('favori').innerHTML = "Retour à la vue global";
-    favori.off('click');
-    favori.click(function (event) { chargerManga(chargerMangaSuccess, chargerErrorManga) });
-  }
-
-
-/**
- * Vas checker le login pour voirsi il a des identifient corect
- */
-function checkLogin() {
-  // récupère les objets InputText du formulaire HTML
-  let username = document.getElementById("txtLogin").value;
-  let password = document.getElementById("txtPassword").value;
-  user = username;
-  if (username == "" || password == "") {
-      alert("Veuillez entrer des identifiants valides")
-  } else {
-      login(username, password, OKLogin, chargerError);
-  }
-
-}
-
-//control que le login est ok ou pas
-function OKLogin(data, text, jqXHR) {
-  if ($(data).find("result").text() == 'ok') {
-      applyCSSLogin();
-  } else {
-      alert("Login ou mot de passe invalide, veuillez réessayer");
-  }
-}
-
-function chargerError(request, status, error) {
-  alert("L'identifiant ou le mot de passe est faux");
-}
-function chargerErrorManga(request, status, error) {
-  alert("Erreur lors de l'ajoute des mangas dans les favoris");
-}
-/**
- * vas afficher les bouttons qui sont cacher lors du login
- */
-function applyCSSLogin() {
-  $("#favori").css("visibility", "visible");
-  $(".butFavori").css("visibility", "visible");
-  var deconnexion = $('#connecter');
-  document.getElementById('connecter').innerHTML = "Déconnexion";
-  deconnexion.off('click');
-  deconnexion.click(function (event) { disconnect(applyCSSDisconnect, chargerError); });
-  var ajouter = $('.butFavori');
-  ajouter.click(function (event) {
-    pk = this.id.slice(5);
-    currentUser(setUser, chargerError);
-    addManga(pk, user, mangaAjoute, chargerErrorManga);
-  });
-  ajouter.each(function () {
-    $pk = this.id.slice(3);
-    mangaDelete($pk);
-})
-}
-/**
- * dissimution des bouttons "Affichage des tomes obtenus" et des bouttons des chaques tomes.
- * 
- */
-function applyCSSDisconnect(data){
-  if(data){
-      $("#favori").css("visibility", "hidden");
-      $(".butFavori").css("visibility", "hidden");
-      var connexion = $('#connecter');
-      document.getElementById('connecter').innerHTML = "Connexion";
-      connexion.off('click');
-      connexion.click(function (event) { checkLogin();});
-      chargerManga(chargerMangaSuccess, chargerError);
-  }
-}
-
-function mangaAjoute(data) {
-  if (data) {
-      var manga = $("#manga" + data);
-      manga.css("background-color", "red");
-      manga.text("Retirer le tome de la mangatek");
-      manga.off("click");
-      manga.click(function (event) {
-          pk = this.id.slice(5);
-          currentUser(setUser, chargerError);
-          deleteManga(pk, user, mangaDelete, chargerError);
-      })
-  }
-}
-
-
-function mangaDelete(data) {
-  if (data) {
-      var manga = $("#manga" + data);
-      manga.css("background-color", "lightgreen");
-      manga.text("Ajouter le tome de à mangatek");
-      manga.off("click");
-      manga.click(function (event) {
-          pk = this.id.slice(5);
-          currentUser(setUser, chargerError);
-          addManga(pk, user, mangaAjoute, chargerError);
-      })
-  }
-}
-
-function setUser(data) {
-  user=data;
-}
-
-function verifyLogged(data) {
-  if (data) {
-      applyCSSLogin();
-  }
-}
-
-/**
- * Méthode appelée en cas d'erreur lors de la lecture des mangas
- * @param {type} request
- * @param {type} status
- * @param {type} error
- * @returns {undefined}
- */
-function chargerMangaError(request, status, error) {
-  alert("Erreur lors de la lecture des mangas: " + error);
-}
-
-/**
- * Méthode appelée en cas d'erreur lors de la lecture des skieurs
- * @param {type} request
- * @param {type} status
- * @param {type} error
- * @returns {undefined}
- */
-function chargerUtilisateurError(request, status, error) {
-  alert("Erreur lors de la lecture des utilisateur: " + error);
-}
-
-/**
- * Méthode "start" appelée après le chargement complet de la page
- * @param {type} data
- */
-$(document).ready(function() {
-  var cmbManga = $("#cmbManga");
-  var manga = '';
-  var connecter = $('#connecter');
-  var favori = $('.favori')
-  $.getScript("javascripts/helpers/dateHelper.js", function() {
-    console.log("dateHelper.js chargé !");
-  });
-  $.getScript("javascripts/beans/manga.js", function() {
-    console.log("manga.js chargé !");
-  });
-  $.getScript("javascripts/beans/utilisateur.js", function() {
-    console.log("utilisateur.js chargé !");
-  });
-  $.getScript("javascripts/services/servicesHttp.js", function() {
-    console.log("servicesHttp.js chargé !");
-    chargerManga(chargerMangaSuccess, chargerMangaError);
-  });
-  cmbManga.change(function(event) {
-    manga = this.options[this.selectedIndex].value;
-    chargerUtilisateur(JSON.parse(manga).pk, chargerUtilisateurSuccess, chargerUtilisateurError);
-  });
-  connecter.click(function(event){
-    checkLogin();
-  });
-  favori.click(function (event) {
-    getFavori(user, chargerFavori, chargerError);
-  })
-
-
-  
+$().ready(function () {
+  wrk = new Service();
+  window.ctrl = new IndexCtrl();
+  wrk.centraliserErreurHttp(ctrl.afficherErreurHttp);  
 });
 
+
+class IndexCtrl {
+  /**
+   * Constructor of IndexCtrl.
+   */
+  constructor() {
+  }
+
+  /**
+   * Alert with the error message
+   * @param msg The message to show.
+   */
+  afficherErreurHttp(msg) {
+      alert(msg);
+  }
+
+  /**
+   * Load the connected main page with the username received by the request.
+   * @param data The json form of the response
+   */
+  successCheck(data) {
+      if (data.result == true) {
+          ctrl.loadAccueilLogin(data.name);
+      } else {
+          ctrl.loadAccueil();
+      }
+  }
+
+  /**
+   * Sends a request to get all articles in the player inventory
+   */
+  getInventory() {
+      wrk.getInventory(this.invSucess);
+  }
+
+  /**
+   * Create Element for each article found in the database and append them in a div.
+   * @param data The json form of the response
+   */
+  async articlesSucess(data) {
+
+      $("#content").empty();
+      var types = await wrk.getTypes();
+      var dict = {}
+      types.forEach(obj => {
+          dict[obj.pk_type] = obj.name;
+      })
+
+      data.forEach(obj => {
+
+          var div = document.createElement("div");
+          div.className = "item";
+
+          var name = document.createElement("h3");
+          name.textContent = obj.name;
+          div.appendChild(name);
+
+          var img = document.createElement("img");
+          img.src = obj.image;
+          img.width = 280;
+          img.alt = obj.pk_article;
+          div.appendChild(img);
+
+          var price = document.createElement("p");
+          price.textContent = obj.price + " Gold";
+          div.appendChild(price);
+
+          var fk = document.createElement("p");
+          fk.textContent = dict[obj.fk_type];
+          div.appendChild(fk);
+
+          var buy = document.createElement("button");
+          buy.innerText = "Purchase";
+          buy.onclick = () => {
+              ctrl.buy(obj.pk_article);
+          }
+          div.appendChild(buy);
+
+          $("#content").append(div);
+      })
+
+  }
+
+  /**
+   * Create Element for each article found in the inventory of the user and append them in a div.
+   * @param data The json form of the response
+   */
+  async invSucess(data) {
+
+      $("#content").empty();
+      var types = await wrk.getTypes();
+      var dict = {}
+      types.forEach(obj => {
+          dict[obj.pk_type] = obj.name;
+      })
+
+      data.forEach(obj => {
+
+          var div = document.createElement("div");
+          div.className = "item";
+
+          var name = document.createElement("h3");
+          name.textContent = obj.name;
+          div.appendChild(name);
+
+          var img = document.createElement("img");
+          img.src = obj.image;
+          img.width = 280;
+          img.alt = obj.pk_article;
+          div.appendChild(img);
+
+          var price = document.createElement("p");
+          price.textContent = obj.price + " Gold";
+          div.appendChild(price);
+
+          var fk = document.createElement("p");
+          fk.textContent = dict[obj.fk_type];
+          div.appendChild(fk);
+
+          $("#content").append(div);
+      })
+
+  }
+
+  /**
+   * Add the article to the inventory of the user
+   * @param pk the pk of the article
+   */
+  buy(pk) {
+      wrk.buy(pk, this.buySuccess);
+  }
+
+  /**
+   * Callback from the buy request. Shows "Thanks for the purchase"
+   */
+  buySuccess() {
+      alert("Thanks for the purchase");
+  }
+
+  /**
+   * Check the response of the register user request. Loads the main page if valid, show "NOT WORKING" otherwise.
+   * @param data The json form of the response
+   */
+  registerSuccess(data) {
+      if (data.result == true) {
+          $("#Rresult").text("")
+          ctrl.loadLogin();
+      } else {
+          $("#Rresult").text("NOT WORKING")
+      }
+  }
+
+  /**
+   * Check if the login is successful. Load the connected main page, show "NOT WORKING" otherwise.
+   * @param data The json form of the response
+   */
+  loginSuccess(data) {
+      if (data.result != "false") {
+          $("#Lresult").text("")
+          var usr = $("#Lusername").val()
+          ctrl.loadAccueilLogin(usr);
+      } else {
+          $("#Lresult").text("NOT WORKING")
+      }
+  }
+
+
+  /**
+   * Get the username and password and call the Wrk to make register user request. Verify both password field are the same before making the call.
+   */
+  registerUser() {
+      if ($("#Rpasswordcheck").val() === $("#Rpassword").val() && $("#Rusername").val()) {
+          wrk.registerUser($("#Rusername").val(), $("#Rpassword").val(), this.registerSuccess);
+      } else {
+          $("#Rresult").text("Password not matching or empty username");
+      }
+  }
+
+  /**
+   * Call the wrk to log in on the server
+   */
+  loginUser() {
+      wrk.login($("#Lusername").val(), $("#Lpassword").val(), this.loginSuccess)
+  }
+
+  /**
+   * Function used by a button in the html to disconnect the session.
+   */
+  disconnect() {
+      wrk.disconnect(this.successDisconnect);
+  }
+
+  /**
+   * Function call when the disconnection is a success.
+   */
+  successDisconnect() {
+      ctrl.loadAccueil();
+  }
+
+  /**
+   * Load the login page.
+   */
+  loadLogin() {
+      wrk.loadView("login");
+  }
+
+  /**
+   * Load the connected main page and show the current user.
+   * @param usr The user to show. The one who is connected.
+   */
+  loadAccueilLogin(usr) {
+      wrk.loadView("accueilLogin", () => document.getElementById("status").innerText = "User: " + usr);
+      wrk.getArticles(this.articlesSucess);
+
+  }
+
+  /**
+   * Load the basic main page.
+   */
+  loadAccueil() {
+      wrk.loadView("accueil")
+      wrk.getArticles(this.articlesSucess);
+
+  }
+
+  /**
+   * Load the register page.
+   */
+  loadRegister() {
+      wrk.loadView("register");
+  }
+
+}
