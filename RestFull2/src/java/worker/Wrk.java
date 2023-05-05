@@ -281,7 +281,7 @@ public class Wrk {
                         while (rs.next()) {
                             //On stocke le nom récupéré de la colonne "NomDuManga". 
                             String result = "";
-                            result = result + "User " + user + " Nom du manga: " + rs.getString(2) + " Nom du tome: " + rs.getString(3) + " Numéro du tome: " + rs.getString(4) + " Image:" + rs.getString(5);
+                            result = result + "User " + user + " Nom du manga: " + rs.getString(2) + " Nom du tome: " + rs.getString(3) + " Numero du tome: " + rs.getString(4) + " Image:" + rs.getString(5);
                             resultat.add(result);
                         }
 
@@ -388,8 +388,7 @@ public class Wrk {
                 //On ferme le tout pour optimiser les performances.
 
             } catch (SQLException ex) {
-                Logger.getLogger(Wrk.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
             finally {
                 dbDisconnect();
