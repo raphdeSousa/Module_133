@@ -22,4 +22,4 @@ fkUser : 1
 fkManga : 12
 
 apiGetManga (GET)
-https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=apiAjoutFavoris
+https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=apiGetManga
