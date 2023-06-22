@@ -5,7 +5,7 @@ site de manga
 API-Gateway :
 
 Login (POST)
-https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=login
+https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=apiLogin
 username : malcolm ou raphael
 password : Pa$$w0rd
 
