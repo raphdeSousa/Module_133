@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <title>Grand Liste</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <script type="text/javascript" src="js/helpers/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/ctrl/indexCtrl.js"></script>
+    <script type="text/javascript" src="js/services/servicesHttp.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="titre">
+            <h1>Grand Liste</h1>
+        </div>
+        <div class="connexion">
+            <div class="loginLabel">
+                <label class="labelLogin">Login</label>
+            </div>
+            <div class="passwordLabel">Password</div>
+            <div class="login">
+                <input name="username" id="username" />
+            </div>
+            <div class="password">
+                <input type="password" name="password" id="password" />
+            </div>
+            <div id="coDeco" class="connecter">
+                <button class = "button" id="btnConnecter" type="submit" onclick="callLogin()">Connexion</button>
+                <button class = "button" id="btnDeconnecter" type="submit" onclick="calldisconnect()">Deconnexion</button>
+            </div>
+            <div class="favoris">
+                <button id="btnFavoris">Affichage des tomes obtenus</button>
+            </div>
+        </div>
+    </div>
+    <div id="btnGestion" class="btnGestion">
+        <button id="addMangaBtn" onclick="infoForAdd()">Ajouter un Manga</button>
+        <button id="modifyMangaBtn" onclick="infoForModify()">Modifier un Manga</button>
+        <button id="deleteMangaBtn" onclick="infoForDelete()">Suprimer un Manga</button>
+    </div>
+
+    <div id="resultBtnPressed"></div>
+
+</body>
+
+</html>
