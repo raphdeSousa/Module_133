@@ -2,6 +2,12 @@
 site de manga
 ![](/schéma.png)
 
+Client 1 (Admin) :
+https://gfellerm01.emf-informatique.ch/GrandList/Client/
+
+Client 2 (User/Visiteur) :
+https://desousar.emf-informatique.ch/133-Client2/
+
 API-Gateway :
 
 Login (POST)
