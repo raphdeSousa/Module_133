@@ -2,6 +2,9 @@
 site de manga
 ![](/schéma.png)
 
+username : malcolm ou raphael
+password : Pa$$w0rd
+
 Client 1 (Admin) :
 https://gfellerm01.emf-informatique.ch/GrandList/Client/
 
@@ -12,8 +15,6 @@ API-Gateway :
 
 Login (POST)
 https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=apiLogin
-username : malcolm ou raphael
-password : Pa$$w0rd
 
 apiAjoutManga (POST)
 https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=apiAjoutManga
