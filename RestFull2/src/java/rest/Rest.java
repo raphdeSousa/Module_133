@@ -17,7 +17,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import worker.Wrk;
 
@@ -93,21 +92,22 @@ public class Rest {
 //        On affiche notre résultat.
         return gson.toJson(ok);
     }
-    
+
     @PUT
     @Path("modifyManga")
     @Produces(MediaType.TEXT_PLAIN)
-    public String modifyManga(@FormParam("Pk") int pk,@FormParam("nomDuManga") String nomDuManga, @FormParam("nomDuTome") String nomDuTome, @FormParam("numDuTome") String numeroDuTome, @FormParam("image") String image) {
+    public String modifyManga(@FormParam("Pk") int pk, @FormParam("nomDuManga") String nomDuManga, @FormParam("nomDuTome") String nomDuTome, @FormParam("numDuTome") String numeroDuTome, @FormParam("image") String image) {
         Gson gson = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
-        boolean ok = wrk.modifyManga(pk,nomDuTome, nomDuManga, numeroDuTome, image);
+        boolean ok = wrk.modifyManga(pk, nomDuTome, nomDuManga, numeroDuTome, image);
 //        On affiche notre résultat.
         return gson.toJson(ok);
     }
+
     @DELETE
     @Path("deleteManga")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteManga(@QueryParam("Pk") int pk) {
+    public String deleteManga(@FormParam("Pk") int pk) {
         Gson gson = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
         boolean ok = wrk.deleteManga(pk);
@@ -118,42 +118,45 @@ public class Rest {
     @GET
     @Path("getFavoris")
     @Produces(MediaType.TEXT_PLAIN)
-    public String getMangaUser(@QueryParam("u") int user) {
+    public String getMangaUser(String userId) {
+
         Gson builder = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
-        String mangaUser = builder.toJson(wrk.lireFavoris(user));
+        String mangaUser = builder.toJson(wrk.lireFavoris(userId));
 //        On affiche notre résultat.
         return mangaUser;
+
     }
-    
+
     @POST
     @Path("ajoutFavoris")
     @Produces(MediaType.TEXT_PLAIN)
-    public String addFavoris(@FormParam("fkUser") int fkUser,@FormParam("fkManga") int fkManga) {
+    public String addFavoris(@FormParam("fkUser") int fkUser, @FormParam("fkManga") int fkManga) {
         Gson gson = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
-        boolean ok = wrk.addFavoris(fkUser,fkManga);
+        boolean ok = wrk.addFavoris(fkUser, fkManga);
 //        On affiche notre résultat.
         return gson.toJson(ok);
     }
-    
+
     @PUT
     @Path("modifyFavoris")
     @Produces(MediaType.TEXT_PLAIN)
-    public String modifyFavoris(@FormParam("newFkUser") int newFkUser,@FormParam("newFkManga") int newFkManga, @FormParam("oldFkUser") int oldFkUser, @FormParam("oldFkManga") int oldFkManga) {
+    public String modifyFavoris(@FormParam("newFkUser") int newFkUser, @FormParam("newFkManga") int newFkManga, @FormParam("oldFkUser") int oldFkUser, @FormParam("oldFkManga") int oldFkManga) {
         Gson gson = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
-        boolean ok = wrk.modifyFavoris(newFkUser,newFkManga,oldFkUser,oldFkManga);
+        boolean ok = wrk.modifyFavoris(newFkUser, newFkManga, oldFkUser, oldFkManga);
 //        On affiche notre résultat.
         return gson.toJson(ok);
     }
+
     @DELETE
     @Path("deleteFavoris")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteFavoris(@FormParam("FKM") int fkManga,@FormParam("FKU") int fkUser) {
+    public String deleteFavoris(@FormParam("FKM") int fkManga, @FormParam("FKU") int fkUser) {
         Gson gson = new Gson();
 //        Le constructeur va transformer notre ArrayList de résultats dans un format JSON.
-        boolean ok = wrk.deleteFavoris(fkUser,fkManga);
+        boolean ok = wrk.deleteFavoris(fkUser, fkManga);
 //        On affiche notre résultat.
         return gson.toJson(ok);
     }

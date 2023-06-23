@@ -8,6 +8,7 @@ import beans.BeanInfo;
 import beans.ParameterStringBuilder;
 import beans.SimpleResponse;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import javax.servlet.*;
@@ -56,7 +57,7 @@ public class GatewayServlet extends HttpServlet {
             case "apiGetFavoris":
 
                 if (session.getAttribute("login") == null) {
-                    response.sendError(401, "Vous n'etes pas logge");
+                    response.sendError(401, "Vous n etes pas logge");
                     break;
                 }
 
@@ -68,24 +69,16 @@ public class GatewayServlet extends HttpServlet {
 
     public String apiGetManga(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String valeurRetour = "";
+        String code = sendGet("http://desousar.emf-informatique.ch/javaRestFull2/webresources/manga/getManga");
 
-        String code = sendGet("http://desousar.emf-informatique.ch/java.JspRestFull2/webresources/manga/getManga");
-
-        valeurRetour = toUrlFormat(code);
-
-        return valeurRetour;
+        return code;
     }
 
     public String apiGetFavoris(HttpServletRequest request, HttpServletResponse response, String login) throws ServletException, IOException {
 
-        String valeurRetour = "";
+        String code = sendGet("http://desousar.emf-informatique.ch/javaRestFull2/webresources/manga/getFavoris?u=" + login);
 
-        String code = sendGet("http://desousar.emf-informatique.ch/java.JspRestFull2/webresources/manga/getFavoris?u=" + login);
-
-        valeurRetour = toUrlFormat(code);
-
-        return valeurRetour;
+        return code;
     }
 
     private String sendGet(String url) {
@@ -107,7 +100,7 @@ public class GatewayServlet extends HttpServlet {
     }
 
     private String toUrlFormat(String login) {
-        return login.replace(" ", "%20");
+        return login.replace(" ", " ");
     }
 
     /**
@@ -131,6 +124,13 @@ public class GatewayServlet extends HttpServlet {
         switch (action) {
             case "apiLogin":
                 result = apiLogin(request, response, session);
+                out.println(result);
+                break;
+
+            case "apiCheckLogin":
+                if (session.getAttribute("login") != null) {
+                    result = session.getAttribute("login").toString();
+                }
                 out.println(result);
                 break;
 

@@ -2,55 +2,83 @@
  * Couche de services HTTP .
  *
  * @author de Sousa Raphael
- * @version 1.0 / 05.05.2023
+ * @version 1.0 / 22.06.2023
  */
 
-var URL = "http://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet";
+var URL = "https://gfellerm01.emf-informatique.ch/javaAPI-Gateway/GatewayServlet?action=";
 
+ /**
+ * Login function, if the login is successful, we call loginSuccessCallBack, else we call loginErrorCallBack.
+ * @param username login name
+ * @param password user password
+ * @param successCallback success callback
+ * @param errorCallBack error callback
+ */
 
+function login(username, password, successCallback, errorCallBack) {
+  $.ajax({
+    type: "POST",
+    dataType: "json",
+    url: URL + "apiLogin",
+    data: "username=" + username + "&password=" + password,
+    xhrFields: {
+      withCredentials: true,
+    },
+    async: false,
+    crossDomain: true,
+    success: successCallback,
+    error: errorCallBack
+  });
+}
 
-class Service {
+/**
+* Make an ajax request to check if the user is connected.
+* @param successCallback The function called when the request is successful
+*/
+function checkLogin(successCallback, errorCallback) {
+  $.ajax({
+    type: "POST",
+    dataType: "text",
+    url: URL + "apiCheckLogin",
+    xhrFields: {
+      withCredentials: true
+    },
+    async: false,
+    crossDomain: true,
+    success: successCallback,
+    error: errorCallback
+  });
+}
 
-  constructor() {
-
-  }
-
-  /**
-   * Login function, if the login is successful, we call loginSuccessCallBack, else we call loginErrorCallBack.
-   * @param login login name
-   * @param password password
-   * @param successCallback success callback
-   * @param errorCallBack error callback
-   */
-  login(login, password, successCallback, errorCallBack) {
-    $.ajax({
-      type: "POST",
-      dataType: "json",
-      data: "action=apiLogin&username=" + login + "&password=" + password,
-      url: URL,
-      xhrFields: {
-        withCredentials: true,
-      },
-      async: false,
-      crossDomain: true,
-      success: successCallback,
-      error: errorCallBack
-    });
-
-
-  }
-
+/**
+ * disconnects the user
+ * @param successCallback success callback
+ * @param errorCallBack error callback
+ */
+function disconnect(successCallback, errorCallback) {
+  $.ajax({
+    type: "POST",
+    datatype: 'json',
+    url: URL + "apiDisconnect",
+    xhrFields: {
+      withCredentials: true
+    },
+    async: false,
+    crossDomain: true,
+    success: successCallback,
+    error: errorCallback
+  });
+}
   /**
    * Get all the manga
    * @param successCallback success callback
    * @param errorCallBack error callback
    */
-  getManga(successCallback, errorCallBack) {
+  function getManga(successCallback, errorCallBack) {
     $.ajax({
       type: "GET",
       dataType: "json",
-      data: "action=getManga",
-      url: URL,
+      url: URL +"apiGetManga",
       xhrFields: {
         withCredentials: true
       },
@@ -66,12 +94,12 @@ class Service {
    * @param successCallback success callback
    * @param errorCallBack error callback
    */
-  getMangaFavoris(successCallback, errorCallBack) {
+  function getFavoris(successCallback, errorCallBack) {
     $.ajax({
       type: "GET",
       dataType: "json",
-      data: "action=getFavoris",
-      url: URL,
+      data: data,
+      url: URL +"apiGetFavoris",
       xhrFields: {
         withCredentials: true
       },
@@ -82,30 +110,7 @@ class Service {
     });
   }
 
-  /**
-   * adds an manga
-   * @param NomDuManga name of the manga
-   * @param Image image of the tome
-   * @param NumeroDuTome num of the tome
-   * @param NomDuTome name of the tome
-   * @param successCallback success callback
-   * @param errorCallBack error callback
-   */
-  addManga(NomDuManga, NomDuTome, NumeroDuTome, Image, successCallback, errorCallback) {
-    $.ajax({
-      type: "POST",
-      datatype: 'json',
-      data: "action=apiAjoutManga&nomDuManga=" + NomDuManga + "&nomDuTome=" + NomDuTome + "&numDuTome=" + NumeroDuTome + "&image=" + Image,
-      url: URL,
-      xhrFields: {
-        withCredentials: true
-      },
-      async: false,
-      crossDomain: true,
-      success: successCallback,
-      error: errorCallback
-    });
-  }
+
   /**
    * adds an favoris
    * @param FK_manga fk of the manga
@@ -113,12 +118,12 @@ class Service {
    * @param successCallback success callback
    * @param errorCallBack error callback
    */
-  addFavoris(FK_manga, FK_user, successCallback, errorCallback) {
+  function addFavoris(FK_manga, FK_user, successCallback, errorCallback) {
     $.ajax({
       type: "POST",
       datatype: 'json',
-      data: "action=apiAjoutFavoris&fkManga=" + FK_manga + "&fkUser=" + FK_user,
-      url: URL,
+      data: data +"fkManga=" + FK_manga + "&fkUser=" + FK_user,
+      url: URL +"apiGetFavoris",
       xhrFields: {
         withCredentials: true
       },
@@ -130,23 +135,25 @@ class Service {
   }
 
   /**
-   * Checks if there is a session
+   * adds an favoris
+   * @param FK_manga fk of the manga
+   * @param FK_user fk of the user
    * @param successCallback success callback
    * @param errorCallBack error callback
    */
-  checkSession(successCallback, errorCallBack) {
+  function delFavoris(FK_manga, FK_user, successCallback, errorCallback) {
     $.ajax({
-      type: "POST",
-      dataType: "json",
-      data: "action=check",
-      url: URL,
+      type: "DELETE",
+      datatype: 'json',
+      data: data + "fkManga=" + FK_manga + "&fkUser=" + FK_user,
+      url: URL +"apiDeleteFavoris",
       xhrFields: {
         withCredentials: true
       },
       async: false,
       crossDomain: true,
       success: successCallback,
-      error: errorCallBack
+      error: errorCallback
     });
   }
 
@@ -155,7 +162,7 @@ class Service {
    * @param successCallback success callback
    * @param errorCallBack error callback
    */
-  disconnect(successCallback, errorCallBack) {
+  function disconnect(successCallback, errorCallBack) {
     $.ajax({
       type: "POST",
       dataType: "json",
@@ -172,20 +179,3 @@ class Service {
     });
 
   }
-  isAdmin(successCallback, errorCallBack) {
-    $.ajax({
-      type: "GET",
-      dataType: "json",
-      data: "action=admin",
-      url: URL,
-      xhrFields: {
-        withCredentials: true
-
-      },
-      async: false,
-      crossDomain: true,
-      success: successCallback,
-      error: errorCallBack
-    });
-  }
-}

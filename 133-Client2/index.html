@@ -2,13 +2,12 @@
 <html lang="fr">
 
 <head>
-    <title>Gestion de manga</title>
+    <title>Grand List</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
-	<script type="text/javascript" src="./indexCtrl.js"></script>
-    <script type="text/javascript" src="javascripts/helpers/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="javascripts/controllers/indexCtrl.js"></script>
-
+    <script type="text/javascript" src="helpers/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="ctrl/indexCtrl.js"></script>
+    
 
 </head>
 
@@ -23,24 +22,21 @@
             </div>
             <div class="passwordLabel">Password</div>
             <div class="login">
-                <input name="txtLogin" id="txtLogin" />
+                <input name="username" id="username" />
             </div>
             <div class="password">
-                <input type="password" name="txtPassword" id="txtPassword" />
+                <input type="password" name="password" id="password" />
             </div>
-            <div class="connecter">
-                <button id="connecter">Connexion</button>
+            <div id="coDeco" class="connecter">
+                <button class = "button" id="btnConnecter" type="submit" onclick="callLogin()">Connexion</button>
+                <button class = "button" id="btnDeconnecter" type="submit" onclick="calldisconnect()">Deconnexion</button>
+            </div>
+            <div class="favori">
+                <button id="favori">Affichage des favoris</button>
             </div>
         </div>
     </div>
-    <div class="containerGestion">
-        <div id="titre2" class="titre2">
-            <h2>Gestion de Manga</h2>
-        </div>
-        <div class="gestionbnt">
-            <button id="ajouter">ajouter</button>
-            <button id="modifier">modifier</button>
-            <button id="supprimer">supprimer</button>
+        <div id="listeManga" class="listeManga">
         </div>
     </div>
 

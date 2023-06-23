@@ -4,6 +4,9 @@
  */
 package worker;
 
+import beans.Manga;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,43 +70,36 @@ public class Wrk {
         return ok;
     }
 
-    public ArrayList<String> lireManga() {
-        //On prépare nos variables.
-        ArrayList<String> resultat = new ArrayList<>();
+    public String lireManga() {
+        ArrayList<Manga> resultat = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
-        //On essaie de se connecter à la base de données. 
+
         if (dbConnect()) {
             try {
-                //On essaie de créer une requête grâce à notre connexion. 
                 if ((stmt = jdbcConnection.createStatement()) != null) {
-                    //Ce string est la requête SQL qui va récupérer les enregistrements.
-                    String sql = "SELECT * FROM t_manga";
-                    //On exécute la requête et on stocke la réponse dans un "ResulSet"
-                    //Si notre "ResulSet" contient quelque chose, c'est qu'on a reçu une réponse !
+                    String sql = "SELECT * FROM t_manga ORDER BY NomDuManga;";
+
                     if ((rs = stmt.executeQuery(sql)) != null) {
-                        //On effectue une boucle qui va parcourir notre résultat.
-                        //La méthode ".next()" avance d'un index renvoie "true"
-                        //s'il y a un résultat. Sinon, "false" quand il atteint
-                        //un enregistrement null.
                         while (rs.next()) {
-                            //On stocke le nom récupéré de la colonne "NomDuManga". 
-                            String s = "";
-                            s = "Pk du Manga : "+rs.getString(1)+" Nom du Manga " + rs.getString(2) + " Nom du Tome " + rs.getString(3) + " Numéro du Tome " + rs.getString(4) + " img " + rs.getString(5)+" \n";
-                            resultat.add(s);
-                            //On stocke notre String dans notre résultat final.
+                            Manga manga = new Manga();
+                            manga.setPk_manga(rs.getString("pk_manga"));
+                            manga.setNomDuManga(rs.getString("NomDuManga"));
+                            manga.setNomDuTome(rs.getString("NomDuTome"));
+                            manga.setNumeroDuTome(rs.getString("NumeroDuTome"));
+                            manga.setImage(rs.getString("Image"));
+                            resultat.add(manga);
                         }
                     }
-                    //On ferme le tout pour optimiser les performances.
+
                     rs.close();
                     rs = null;
                     stmt.close();
-                    stmt.close();
+                    stmt = null;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
-            } //On repasse les variables pour vérifier que tout est bien fermé.
-            finally {
+            } finally {
                 dbDisconnect();
                 try {
                     if (rs != null) {
@@ -122,7 +119,11 @@ public class Wrk {
                 }
             }
         }
-        return resultat;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(resultat);
+        /*json.replace("[","");
+        json.replace("]", "");*/
+        return json;
     }
 
     public boolean addManga(String nomDuTome, String nomDuManga, String numeroDuTome, String image) {
@@ -215,6 +216,7 @@ public class Wrk {
 
         return ok;
     }
+
     public boolean deleteManga(int pk) {
         boolean ok = false;
         boolean opendb = dbConnect();
@@ -257,9 +259,9 @@ public class Wrk {
         return ok;
     }
 
-    public ArrayList<String> lireFavoris(int user) {
-        //On prépare nos variables.
-        ArrayList<String> resultat = new ArrayList<>();
+    public String lireFavoris(String userId) {
+
+        ArrayList<Manga> resultat = new ArrayList<>();
         Statement stmt = null;
         ResultSet rs = null;
         //On essaie de se connecter à la base de données. 
@@ -268,25 +270,22 @@ public class Wrk {
                 //On essaie de créer une requête grâce à notre connexion. 
                 if ((stmt = jdbcConnection.createStatement()) != null) {
                     //Ce string est la requête SQL qui va récupérer les enregistrements.
-                    String sql = "SELECT tr_manga_user.FK_user, t_manga.NomDuManga, t_manga.NomDuTome, t_manga.NumeroDuTome, t_manga.Image FROM t_manga INNER JOIN tr_manga_user ON tr_manga_user.FK_manga = t_manga.PK_Manga WHERE tr_manga_user.FK_user = " + user;
-
-
+                    String sqlUM = "SELECT * FROM tr_manga_user";
+                    String sql = "SELECT * FROM t_manga";
                     //On exécute la requête et on stocke la réponse dans un "ResulSet"
                     //Si notre "ResulSet" contient quelque chose, c'est qu'on a reçu une réponse !
                     if ((rs = stmt.executeQuery(sql)) != null) {
-                        //On effectue une boucle qui va parcourir notre résultat.
-                        //La méthode ".next()" avance d'un index renvoie "true"
-                        //s'il y a un résultat. Sinon, "false" quand il atteint
-                        //un enregistrement null.
                         while (rs.next()) {
-                            //On stocke le nom récupéré de la colonne "NomDuManga". 
-                            String result = "";
-                            result = result + "User " + user + " Nom du manga: " + rs.getString(2) + " Nom du tome: " + rs.getString(3) + " Numero du tome: " + rs.getString(4) + " Image:" + rs.getString(5);
-                            resultat.add(result);
+                            Manga manga = new Manga();
+                            manga.setPk_manga(rs.getString("pk_manga"));
+                            manga.setNomDuManga(rs.getString("NomDuManga"));
+                            manga.setNomDuTome(rs.getString("NomDuTome"));
+                            manga.setNumeroDuTome(rs.getString("NumeroDuTome"));
+                            manga.setImage(rs.getString("Image"));
+                            resultat.add(manga);
                         }
-
-                        //On stocke notre String dans notre résultat final.
                     }
+
                     //On ferme le tout pour optimiser les performances.
                     rs.close();
                     rs = null;
@@ -295,8 +294,7 @@ public class Wrk {
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
-            } //On repasse les variables pour vérifier que tout est bien fermé.
-            finally {
+            } finally {
                 dbDisconnect();
                 try {
                     if (rs != null) {
@@ -316,7 +314,9 @@ public class Wrk {
                 }
             }
         }
-        return resultat;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(resultat);
+        return json;
     }
 
     public boolean addFavoris(int fkUser, int fkManga) {
@@ -336,10 +336,8 @@ public class Wrk {
                 int rowsInserted = ps.executeUpdate();
                 ok = rowsInserted > 0;
                 //On ferme le tout pour optimiser les performances.
-
             } catch (SQLException ex) {
-                Logger.getLogger(Wrk.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
             finally {
                 dbDisconnect();
@@ -347,21 +345,17 @@ public class Wrk {
                     if (rs != null) {
                         rs.close();
                         rs = null;
-
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
                     if (ps != null) {
                         ps.close();
                         ps = null;
-
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -386,7 +380,6 @@ public class Wrk {
                 ps.executeUpdate();
                 ok = true;
                 //On ferme le tout pour optimiser les performances.
-
             } catch (SQLException ex) {
                 Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
@@ -396,21 +389,17 @@ public class Wrk {
                     if (rs != null) {
                         rs.close();
                         rs = null;
-
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
                     if (ps != null) {
                         ps.close();
                         ps = null;
-
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -434,10 +423,8 @@ public class Wrk {
                 ps.executeUpdate();
                 ok = true;
                 //On ferme le tout pour optimiser les performances.
-
             } catch (SQLException ex) {
-                Logger.getLogger(Wrk.class
-                        .getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
             } //On repasse les variables pour vérifier que tout est bien fermé.
             finally {
                 dbDisconnect();
@@ -445,21 +432,17 @@ public class Wrk {
                     if (rs != null) {
                         rs.close();
                         rs = null;
-
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
                     if (ps != null) {
                         ps.close();
                         ps = null;
-
                     }
                 } catch (SQLException ex) {
-                    Logger.getLogger(Wrk.class
-                            .getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Wrk.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
